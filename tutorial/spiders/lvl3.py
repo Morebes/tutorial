@@ -1,21 +1,17 @@
-import scrapy
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
 
 from tutorial.loader import ProductLoader
 from tutorial.items import Product
-
-class Lvl3Spider(scrapy.Spider):
-    name = 'lvl3'
-    allowed_domains = ['bry.vkusvill.ru']
     
-    def start_requests(self):
-        urls = ['https://bry.vkusvill.ru/goods/gotovaya-eda/',]
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse_link)
+class SpiderSpider(CrawlSpider):
+    name = 'lvl3'
+    start_urls = ['https://bry.vkusvill.ru/goods/gotovaya-eda/']
+    
+    rules = [Rule(LinkExtractor(allow=r'/goods/.*.html'), callback='parse', follow=True),
+            Rule(LinkExtractor(allow=r'/goods/'), follow=True),
+             ]
 
-    def parse_link(self, response):
-        for link in response.css('div.ProductCard__content>a.ProductCard__link::attr(href)').getall():
-            yield scrapy.Request(url=response.urljoin(link),callback=self.parse)
-            
     def parse(self,response):
         loader = ProductLoader(item=Product(),response=response)
         
