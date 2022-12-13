@@ -1,6 +1,6 @@
 import scrapy
-from scrapy.loader import ItemLoader
 
+from tutorial.loader import ProductLoader
 from tutorial.items import Product
 
 class Lvl3Spider(scrapy.Spider):
@@ -17,7 +17,7 @@ class Lvl3Spider(scrapy.Spider):
             yield scrapy.Request(url=response.urljoin(link),callback=self.parse)
             
     def parse(self,response):
-        loader = ItemLoader(item=Product(),response=response)
+        loader = ProductLoader(item=Product(),response=response)
         
         loader.add_css('name','h1::text')
         loader.add_css('weight','div.ProductCard__weight::text')
