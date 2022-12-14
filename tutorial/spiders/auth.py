@@ -1,9 +1,8 @@
 import scrapy
 from scrapy.utils.response import open_in_browser
 
-from tutorial.items import Card
 class JuniorSpider(scrapy.Spider):
-    name = "junior"
+    name = "auth"
     count_list = 7
     start_urls = ['https://github.com/login']
         
