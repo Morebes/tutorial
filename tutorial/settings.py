@@ -18,7 +18,6 @@ FEED_URI='text.csv'
 
 FEED_EXPORT_ENCODING = 'utf-8'
 
-
 #USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules

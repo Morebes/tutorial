@@ -1,18 +1,24 @@
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
-
+import scrapy
+from scrapy.utils.response import open_in_browser
 from tutorial.loader import ProductLoader
 from tutorial.items import Product
     
-class SpiderSpider(CrawlSpider):
+class SpiderSpider(scrapy.Spider):
     name = 'lvl3'
-    start_urls = ['https://bry.vkusvill.ru/goods/gotovaya-eda/']
+    start_urls = ['https://vkusvill.ru/goods/gotovaya-eda/']
     
-    rules = [Rule(LinkExtractor(allow=r'/goods/.*.html'), callback='parse', follow=True),
-            Rule(LinkExtractor(allow=r'/goods/'), follow=True),
-             ]
-
     def parse(self,response):
+        for link in response.css('div.ProductCard__content>a.ProductCard__link::attr(href)').getall():
+            yield scrapy.Request(url='https://vkusvill.ru'+link,callback=self.get_item)
+            
+        next_page = response.xpath('//span[contains(. , "Вперёд")]/../@href').get()
+
+        if next_page is not None:
+           next_page_url = 'https://vkusvill.ru' + next_page
+           yield response.follow(next_page_url, callback=self.parse) 
+
+        
+    def get_item(self,response):
         loader = ProductLoader(item=Product(),response=response)
         
         loader.add_css('name','h1::text')
